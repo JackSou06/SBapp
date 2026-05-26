@@ -109,7 +109,7 @@ export function SrtToTxtPage() {
     }
 
     const result = await window.fileTools.saveTxtFile({
-      defaultName: "combined-SBapp.txt",
+      defaultName: "combined-subtitle-combine.txt",
       content: combinedText
     });
 

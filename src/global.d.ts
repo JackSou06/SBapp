@@ -6,6 +6,9 @@ declare global {
       selectSrtFiles: () => Promise<FileEntry[]>;
       saveTxtFile: (payload: SaveTxtPayload) => Promise<{ saved: boolean; path?: string }>;
     };
+    updates: {
+      checkForUpdates: () => Promise<{ checked: boolean; message: string }>;
+    };
   }
 }
 

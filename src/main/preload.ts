@@ -5,3 +5,7 @@ contextBridge.exposeInMainWorld("fileTools", {
   selectSrtFiles: () => ipcRenderer.invoke("files:select-srt"),
   saveTxtFile: (payload: SaveTxtPayload) => ipcRenderer.invoke("files:save-txt", payload)
 });
+
+contextBridge.exposeInMainWorld("updates", {
+  checkForUpdates: () => ipcRenderer.invoke("updates:check")
+});

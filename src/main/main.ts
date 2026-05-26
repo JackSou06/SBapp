@@ -1,5 +1,7 @@
-import { app, BrowserWindow, dialog, ipcMain } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, Menu } from "electron";
+import { spawn } from "node:child_process";
 import path from "node:path";
+import { existsSync } from "node:fs";
 import { promises as fs } from "node:fs";
 import type { FileEntry, SaveTxtPayload } from "../shared/types";
 
@@ -11,7 +13,7 @@ function createWindow() {
     height: 760,
     minWidth: 880,
     minHeight: 620,
-    title: "SBapp",
+    title: "Subtitle Combine",
     backgroundColor: "#f6f7f9",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -29,6 +31,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   registerIpcHandlers();
+  createApplicationMenu();
   createWindow();
 
   app.on("activate", () => {
@@ -45,6 +48,10 @@ app.on("window-all-closed", () => {
 });
 
 function registerIpcHandlers() {
+  ipcMain.handle("updates:check", async (): Promise<{ checked: boolean; message: string }> => {
+    return checkForUpdates();
+  });
+
   ipcMain.handle("files:select-srt", async (): Promise<FileEntry[]> => {
     const result = await dialog.showOpenDialog({
       title: "Select SRT files",
@@ -88,4 +95,88 @@ function registerIpcHandlers() {
 
 function makeFileId(filePath: string): string {
   return `${filePath}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function checkForUpdates(): { checked: boolean; message: string } {
+  if (process.platform !== "darwin") {
+    return {
+      checked: false,
+      message: "Update checks are only available in the macOS app."
+    };
+  }
+
+  if (isDev) {
+    return {
+      checked: false,
+      message: "Update checks run in the packaged macOS app."
+    };
+  }
+
+  const helperPath = path.join(process.resourcesPath, "SparkleUpdateHelper");
+
+  if (!existsSync(helperPath)) {
+    return {
+      checked: false,
+      message: "Sparkle update helper is not bundled yet. Build it with scripts/build_sparkle_helper.sh before packaging a release."
+    };
+  }
+
+  const child = spawn(helperPath, [app.getPath("exe")], {
+    detached: true,
+    stdio: "ignore"
+  });
+
+  child.unref();
+
+  return {
+    checked: true,
+    message: "Opening Sparkle update checker..."
+  };
+}
+
+function createApplicationMenu() {
+  const template: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: app.name,
+      submenu: [
+        {
+          label: "Check for Updates...",
+          click: () => {
+            const result = checkForUpdates();
+            if (!result.checked) {
+              dialog.showMessageBox({
+                type: "info",
+                title: "Check for Updates",
+                message: result.message
+              });
+            }
+          }
+        },
+        { type: "separator" },
+        { role: "hide" },
+        { role: "hideOthers" },
+        { role: "unhide" },
+        { type: "separator" },
+        { role: "quit" }
+      ]
+    },
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        { role: "selectAll" }
+      ]
+    },
+    {
+      label: "Window",
+      submenu: [{ role: "minimize" }, { role: "zoom" }, { role: "front" }]
+    }
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }

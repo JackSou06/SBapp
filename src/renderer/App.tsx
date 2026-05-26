@@ -26,9 +26,9 @@ export function App() {
     return (
       <div className="splash-screen" role="status" aria-live="polite">
         <div className="splash-card">
-          <div className="splash-mark">SB</div>
+          <div className="splash-mark">SC</div>
           <div>
-            <h1>SBapp</h1>
+            <h1>Subtitle Combine</h1>
             <p>Preparing file tools</p>
           </div>
           <div className="loading-bar" aria-hidden="true">

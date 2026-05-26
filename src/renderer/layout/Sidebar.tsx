@@ -21,12 +21,20 @@ const tools: Array<{ id: ToolId; label: string; description: string; icon: strin
 ];
 
 export function Sidebar({ activeTool, onSelectTool }: SidebarProps) {
+  const checkForUpdates = async () => {
+    const result = await window.updates.checkForUpdates();
+
+    if (!result.checked) {
+      window.alert(result.message);
+    }
+  };
+
   return (
     <aside className="sidebar">
       <div className="brand">
-        <div className="brand-mark">SB</div>
+        <div className="brand-mark">SC</div>
         <div>
-          <h1>SBapp</h1>
+          <h1>Subtitle Combine</h1>
           <p>File tools</p>
         </div>
       </div>
@@ -49,6 +57,12 @@ export function Sidebar({ activeTool, onSelectTool }: SidebarProps) {
           </button>
         ))}
       </nav>
+
+      <div className="sidebar-footer">
+        <button className="update-button" type="button" onClick={checkForUpdates}>
+          檢查更新
+        </button>
+      </div>
     </aside>
   );
 }

@@ -14,17 +14,22 @@
   },
   "build": {
     "appId": "com.sbapp.app",
-    "productName": "SBapp",
+    "productName": "Subtitle Combine",
     "directories": {
       "output": "release"
     },
+    "afterPack": "scripts/after_pack_sparkle.cjs",
     "electronDist": "node_modules/electron/dist",
     "files": [
       "dist/**/*",
       "package.json"
     ],
     "mac": {
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.productivity",
+      "extendInfo": {
+        "SUFeedURL": "https://JackSou06.github.io/SBapp/appcast.xml",
+        "SUPublicEDKey": "WAaoS0fV2lGaAjhfbjYpeDmPxE7slzPC+AvJzz8j6X4="
+      }
     }
   },
   "dependencies": {
