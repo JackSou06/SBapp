@@ -13,7 +13,7 @@ function createWindow() {
     height: 760,
     minWidth: 880,
     minHeight: 620,
-    title: "Subtitle Combine",
+    title: "SBapp",
     backgroundColor: "#f6f7f9",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),

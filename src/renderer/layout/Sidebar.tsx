@@ -32,9 +32,9 @@ export function Sidebar({ activeTool, onSelectTool }: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="brand">
-        <div className="brand-mark">SC</div>
+        <div className="brand-mark">SB</div>
         <div>
-          <h1>Subtitle Combine</h1>
+          <h1>SBapp</h1>
           <p>File tools</p>
         </div>
       </div>
